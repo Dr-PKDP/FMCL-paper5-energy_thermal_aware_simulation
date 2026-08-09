@@ -272,7 +272,18 @@ def main():
     from SALib.analyze import sobol as sobol_analyze
 
     problem = {"num_vars": len(NAMES), "names": NAMES, "bounds": BOUNDS}
-    Xs = sobol_sample.sample(problem, 256, calc_second_order=False)
+    # seed fixed for reproducibility -- unseeded Saltelli sampling uses a
+    # random scramble by default (SALib scramble=True), so re-running this
+    # without a fixed seed gives a different specific set of evaluation
+    # points each time and, for discrete/skewed outputs like worst_m,
+    # noticeably different total-order index estimates despite an
+    # unchanged, correctly-ranked qualitative conclusion. A dedicated
+    # integer seed (rather than the shared RNG object above) keeps this
+    # reproducible regardless of how much of that generator's state the
+    # Monte Carlo section has already consumed. See COEFFICIENTS_FINDINGS.md,
+    # F9, for the discovery of this.
+    SOBOL_SEED = 20260809
+    Xs = sobol_sample.sample(problem, 256, calc_second_order=False, seed=SOBOL_SEED)
     print(f"  Saltelli design: {Xs.shape[0]} evaluations")
     Ys = [evaluate(x) for x in Xs]
 
