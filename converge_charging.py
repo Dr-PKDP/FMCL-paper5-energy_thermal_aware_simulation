@@ -24,8 +24,8 @@ When the OS suspends background work the device does not merely complete fewer
 local steps -- it fails to return an update at all. That is a dropout, not a
 degraded contribution, and it is correlated with device class and charger rate
 rather than random. This is the mechanism linking thermal state to the
-participation bias that sets the floor, and it connects to Paper 2's dropout
-analysis rather than sitting beside it.
+participation bias that sets the floor: dropout is a first-class scheduling
+signal here, not an afterthought corrected for after the fact.
 """
 
 import numpy as np
@@ -70,10 +70,11 @@ def run(policy, clients, n_classes, dim, n=100, hours=6.0, K=30, seed=0,
     dropped_by_class = {}
     contributions = np.zeros(n)
     # Running selection-propensity estimate, used to remove the participation
-    # bias that any state-dependent selection rule introduces. This is the same
-    # correction Paper 2 applies analytically for Bernoulli participation, done
-    # empirically here because the scheduler's propensities are not in closed
-    # form.
+    # bias that any state-dependent selection rule introduces. This is the
+    # standard inverse-propensity correction (Horvitz & Thompson, 1952) for
+    # Bernoulli participation, applicable in closed form when propensities are
+    # known analytically; done empirically here because the scheduler's
+    # propensities are not.
     sel_count = np.zeros(n)
     rounds_seen = 0
 
