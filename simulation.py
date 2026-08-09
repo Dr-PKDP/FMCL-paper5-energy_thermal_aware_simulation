@@ -1,18 +1,11 @@
 """
 simulation.py
 ==============
-Vendored, unmodified, from the companion repository for the second paper
-in this series:
-
-    "Federated Mobile Crowd Learning: Convergence, Privacy, and
-     Lifecycle Carbon Guarantees"
-    https://github.com/Dr-PKDP/FMCL-paper2-simulation
-
-Included here so this repository is self-contained and does not require
-cloning a second repository to reproduce Sections 7-9 of Paper 5, which
-couple this FedProx engine to the thermal/charging scheduler in
-converge_charging.py. See that paper for validation of this engine on its
-own terms; Paper 5 uses it only as a fixed local-training subroutine.
+Standard FedProx local-training engine (Li et al., MLSys 2020), included
+here so this repository is self-contained. It couples to the
+thermal/charging scheduler in converge_charging.py to reproduce Sections
+7-9 of Paper 5, which uses it only as a fixed local-training subroutine
+and does not modify or extend it.
 """
 
 import numpy as np
