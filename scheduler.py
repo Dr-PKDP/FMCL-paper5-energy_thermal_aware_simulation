@@ -28,9 +28,9 @@ derived for it:
             estimate of the same Lagrange multiplier the Whittle subsidy
             represents, which is why the two should agree.
 
-Baselines: random, Paper 1's static linear score (thermally blind, uses a
-NOMINAL power model), and greedy energy-only (true instantaneous cost, but no
-forward cost of heating).
+Baselines: random, a static linear score typical of reuse-centric FL
+selection (thermally blind, uses a NOMINAL power model), and greedy
+energy-only (true instantaneous cost, but no forward cost of heating).
 """
 
 import numpy as np
@@ -377,9 +377,10 @@ def policy_random(fleet, pool, K, state, rng):
 
 def policy_static_score(fleet, pool, K, state, rng):
     """
-    Paper 1's rule: s_i = a*U_data + b*U_sys - g*E_marginal, with E_marginal
-    from a NOMINAL power model. Thermally blind by construction -- this is the
-    baseline whose miscalibration the paper is about.
+    The standard reuse-centric selection rule: s_i = a*U_data + b*U_sys -
+    g*E_marginal, with E_marginal from a NOMINAL power model. Thermally
+    blind by construction -- this is the baseline whose miscalibration the
+    paper is about.
     """
     a, b, g = 0.4, 0.3, 0.3
     U_data = fleet.utility[pool]
