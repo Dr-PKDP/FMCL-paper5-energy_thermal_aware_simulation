@@ -2,10 +2,9 @@
 FMCL Paper 5 -- Independent verification suite for the coefficient library
 and the coupled thermal/energy/wear model.
 
-Same discipline as Paper 3's 19-check suite: every closed-form result is
-checked against an independently computed value, and every claim the paper
-intends to make is tested rather than assumed. Failures are reported, not
-suppressed.
+Every closed-form result is checked against an independently computed
+value, and every claim the paper intends to make is tested rather than
+assumed. Failures are reported, not suppressed.
 """
 
 import numpy as np
@@ -249,11 +248,11 @@ finding(
     f"requires Ea = {Ea_double/1000:.1f} kJ/mol. The 232-cell, 13-year "
     f"calendar-ageing dataset gives 23.6-29.9 kJ/mol, which yields only "
     f"{r35[0]:.2f}-{r35[2]:.2f}x per 10 C -- roughly a 40% acceleration, not "
-    "100%. Consequence for Paper 5: the Arrhenius arm of the wear objective is "
+    "100%. Consequence: the Arrhenius arm of the wear objective is "
     "substantially WEAKER than the popular framing suggests, which shifts "
     "relative weight onto the cycling arm. This is a correction the paper "
-    "should state explicitly, in the same spirit as Paper 3's correction of "
-    "Paper 1's server embodied-carbon figure."
+    "should state explicitly rather than let a widely repeated but "
+    "unsupported figure stand uncorrected."
 )
 
 
@@ -318,7 +317,7 @@ print("\n" + "-" * 74)
 print("6. CAMPAIGN BATCHING SWEEP  (the headline test)")
 print("-" * 74)
 
-N_ROUNDS = 200          # one year of FMCL campaign, per Paper 1 Sec 5.2
+N_ROUNDS = 200          # one year of typical reuse-centric FL campaign cadence
 T_ROUND = 25.0          # s of active compute per round (EnFed midpoint)
 CAMPAIGN_S = 30 * 24 * 3600.0   # 30 days of wall-clock to fit the campaign in
 
