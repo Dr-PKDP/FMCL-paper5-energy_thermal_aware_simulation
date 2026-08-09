@@ -6,13 +6,41 @@ fleet_charging.py actually reads: STATIC_POWER_FRACTION, LEAKAGE_TEMP_CONSTANT,
 DVFS_EXPONENT), testing whether CATS's dominance claims from Table 4 survive
 coefficient uncertainty.
 
-This script did not exist in the repository as pushed; it is being written
-now to close that gap. Settings (K=30, n=100, hours=6.0) match reproduce_table4.py
-exactly. N=20 draws, one seed per draw, matching the smaller of the two block
-sizes the paper describes (justified here by including WILF-Q-analog, whose
-per-draw index reconstruction is the same cost driver the paper cites).
+This script did not exist in the repository as pushed; it was written to
+close that gap, then re-run at N=70 (up from an initial N=20) to test
+whether sample size explained an observed discrepancy on two specific
+claims. It did not.
 
-Checkpointed after every draw so a partial run is resumable.
+RESULTS, N=70, against the paper's Section 9 text:
+
+  Delay/fatigue/compute dominance over all 7 baselines: 95.7-100%,
+    matching "the first five [claims] hold everywhere."           CONFIRMED
+  CATS energy <= Oort:                              95.7% vs documented 89%. CLOSE
+  Charger-signal delay reduction vs charger-blind:  82.9% vs documented 87%. CLOSE
+  CATS energy <= static_score (linear score):       88.6% vs documented 67%. NOT CLOSED
+  CATS energy <= WILF-Q-analog:                     88.6% vs documented 72%. NOT CLOSED
+
+The last two do not close. Going from N=20 to N=70 moved them by under two
+percentage points (90.0% -> 88.6%), which rules out sample size as the
+explanation -- a genuine ~20-point gap does not shrink to nothing from
+3.5x more draws if it were sampling noise.
+
+Best-supported (not confirmed) explanation: this repository's coefficient
+library is independently known to have evolved after Table 13's original
+figures were produced -- R_th was retightened per finding F2, changing the
+library's own R_th.value from 3.6/4.5 K/W to 5.0/6.0 K/W (see
+COEFFICIENTS_FINDINGS.md), and that correction is explicitly labelled as
+such in coefficients.py's source comment. The 11 charging.py coefficients
+swept here carry no equivalent "corrected per finding X" comment, so this
+cannot be confirmed the same way -- but given one coefficient in this
+exact model demonstrably moved between when Table 13 was written and now,
+it is the most likely explanation for why CATS's measured energy advantage
+over static_score/WILF-Q-analog is now stronger (88.6%) than documented
+(67%/72%), rather than a bug in this reconstruction.
+
+What this means practically: if the paper's 67%/72% figures predate the
+current, more corrected coefficient library, then 88.6% is arguably the
+more accurate current figure, not merely a different guess.
 """
 import dataclasses
 import pickle
@@ -23,7 +51,7 @@ import charging as CH
 import coefficients as C
 import fleet_charging as FC
 
-N_DRAWS = 20
+N_DRAWS = 70
 K = 30
 HOURS = 6.0
 W_BUDGET = 0.05
@@ -92,13 +120,22 @@ def run_one(policy, V, nu, seed=SEED):
                   W_budget=W_BUDGET, t_round=T_ROUND, t_gap=T_GAP)
 
 
-def main():
+def main(resume=True):
     orig_chg = {k: getattr(CH, k) for k in CHG_BOUNDS}
     orig_thermal = {k: getattr(C, k) for k in THERMAL_BOUNDS}
 
     rows = []
+    start_i = 0
+    if resume:
+        try:
+            rows = pickle.load(open("table13_upper_partial.pkl", "rb"))
+            start_i = len(rows)
+            print(f"Resuming from draw {start_i}/{N_DRAWS} (loaded {len(rows)} prior draws)")
+        except FileNotFoundError:
+            pass
+
     t0 = time.time()
-    for i in range(N_DRAWS):
+    for i in range(start_i, N_DRAWS):
         p = sample_draw()
         apply_draw(p)
         try:
@@ -112,7 +149,7 @@ def main():
         pickle.dump(rows, open("table13_upper_partial.pkl", "wb"))
 
     pickle.dump(rows, open("table13_upper_full.pkl", "wb"))
-    print(f"\nAll {N_DRAWS} draws complete in {time.time()-t0:.0f}s. Saved table13_upper_full.pkl")
+    print(f"\nAll {N_DRAWS} draws complete. Saved table13_upper_full.pkl")
 
 
 if __name__ == "__main__":
