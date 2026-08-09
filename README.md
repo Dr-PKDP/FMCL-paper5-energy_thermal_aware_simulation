@@ -41,6 +41,8 @@ well under a minute.
 | `verify.py` | Independent verification suite for the thermal/wear model; run it first |
 | `COEFFICIENTS_FINDINGS.md` | Write-up of the six findings (F1–F6) `verify.py` and `uncertainty.py` produce, plus their Monte Carlo / Sobol robustness results |
 | `table13_upper.py` | Coefficient-uncertainty sweep across all eight policies (Table 13's dominance-robustness claims); N=70, see header docstring for a full account of what reproduces and what doesn't |
+| `table11_reproduction_attempt.py` | Documented reproduction attempt for Table 11 (propensity truncation sweep); does **not** reproduce Table 11 — see `TABLE11_REPRODUCTION_NOTES.md` |
+| `TABLE11_REPRODUCTION_NOTES.md` | What was tried for Table 11, why it doesn't match, and why the paper's values were left unchanged rather than replaced with an unreliable reconstruction |
 | `uncertainty.py`, `uq_charging.py` | Monte Carlo / sensitivity analysis over the coefficient library (Table 13, Section 9) |
 | `baseline_tuning.py` | Minimal hyperparameter search for the three tunable baselines (Section 8.10) |
 | `churn_experiment.py` | Correlated availability shock robustness check (Section 7.8) |
