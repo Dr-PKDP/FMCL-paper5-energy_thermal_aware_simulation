@@ -14,11 +14,12 @@ indices (`python uncertainty.py`).
 Every distribution and robustness figure below was independently
 re-computed from the current codebase and checked against the original
 working notes. The Monte Carlo section matches exactly, to three decimal
-places, across every reported quantity. The Sobol section's rankings match
-exactly; the specific index magnitudes differ slightly because the sample
-size increased from 2048 to 4096 evaluations after the working notes were
-written — more evaluations, lower estimation variance, same qualitative
-picture. Both are noted below.
+places, across every reported quantity. Of five Sobol targets checked
+(energy premium, cost at fatigue-worst batch size, energy-cycling
+correlation, F9's location of the fatigue-worst batch size, F10's Arrhenius
+spread), four reproduce closely; F9's specific total-order-index magnitudes
+diverge more than expected -- same ranking, different size -- flagged and
+discussed in place below rather than smoothed over.
 
 ---
 
@@ -201,17 +202,52 @@ more precise sample.
 | Energy premium | P_train 0.370, R_th 0.255, theta_leak 0.157, f_static 0.153 | tau_heat, tau_cool, T_amb, T_cap, eta_min, p_dvfs, **Ea**, **k_batt**, n_cm |
 | Cost at fatigue-worst batch size | t_round 1.047, n_cm 0.267, tau_heat 0.159, P_train 0.133 | R_th, tau_cool, T_amb, T_cap, eta_min, f_static, theta_leak, p_dvfs, **Ea**, **k_batt** |
 | Energy-cycling correlation | t_round 0.826, tau_heat 0.109, n_cm 0.083 | P_train, R_th, tau_cool, T_amb, T_cap, eta_min, f_static, theta_leak, p_dvfs, **Ea**, **k_batt** |
+| Location of fatigue-worst batch size (F9) | t_round 0.871, tau_heat 0.229, P_train 0.119 | R_th, tau_cool, T_cap, eta_min, f_static, theta_leak, p_dvfs, **Ea**, **k_batt** |
+| Arrhenius spread across batch size (F10) | tau_cool 0.907, tau_heat 0.457, P_train 0.153, R_th 0.087 | eta_min, f_static, theta_leak, p_dvfs, **Ea**, n_cm, t_round |
 
-The location-of-m* and Arrhenius-spread Sobol breakdowns (backing F9 and
-F10's mechanistic attributions) require Sobol analysis over `worst_m` and
-`arrhenius_spread` as direct targets, which is not part of the three targets
-`uncertainty.py`'s current Sobol design evaluates (`energy_premium`,
-`worst_cost`, `corr_energy_cycling`). The rank-correlation figures backing
-F9 (rho = 0.923, 96.9% within one grid step) and F10's attribution to
-`tau_cool`/`tau_heat` are reproduced faithfully above from the original
-working notes; they have not been independently re-run against this
-codebase's current Sobol design and would need a small script extension
-(new Sobol targets, not new sampling) to close that last gap.
+**Update: the location-of-m* and Arrhenius-spread Sobol breakdowns have now
+been independently re-run**, using the two additional fields (`worst_m`,
+`arrhenius_spread`) `evaluate()` already returns but which the shipped
+Sobol loop did not analyse. No new simulation was needed -- the same 4096
+cached evaluations were reused.
+
+**F10 (Arrhenius spread) reproduces closely:**
+
+| parameter | ST (original, N=2048) | ST (this run, N=4096) |
+|---|---|---|
+| tau_cool | 1.013 | 0.907 |
+| tau_heat | 0.442 | 0.457 |
+| P_train | 0.151 | 0.153 |
+| R_th | 0.090 | 0.087 |
+| k_batt | 0.040 | 0.039 |
+
+Same ranking, close magnitudes throughout -- this independently confirms
+F10's mechanistic attribution to `tau_cool`/`tau_heat`.
+
+**F9 (location of m*) reproduces the qualitative claim but not the exact
+magnitudes.** Ranking matches (`t_round` dominant, `tau_heat` second,
+everything else negligible), but total-order indices diverge more than
+sampling noise alone would suggest: this run gives ST = 0.871 for `t_round`
+and 0.229 for `tau_heat`, against the documented 0.678 and 0.291. `worst_m`
+is a discrete, heavily right-skewed output (values restricted to the
+`PATTERNS` list, median 5 against a mean of 7), which is a harder case for
+Sobol decomposition than the smoother `arrhenius_spread` target above, and
+is the likely source of the gap -- but this has not been confirmed, only
+proposed as the most likely explanation.
+
+The underlying hypothesis, m* ~= tau_heat/t_round, holds up well
+independent of the Sobol magnitudes: Spearman rho = 0.941 against the
+documented 0.923 (both strong). The "grid-match" figures required finding
+the original's matching convention -- nearest pattern *by log-distance*,
+since `PATTERNS` (1, 2, 4, 5, 8, 10, 20, 25, 40, 50, 100, 200) is
+log-spaced, not linearly spaced. With that convention, the exact-match rate
+reproduces precisely: **21.9%, an exact match** to the documented figure.
+The within-one-grid-step rate improves to 87.5% under the same convention
+but does not fully close the gap to the documented 96.9% -- plausibly
+genuine sample-point variance between the N=128-base and N=256-base Sobol
+designs (different specific points, not just more of them), but this
+remains an open few points of discrepancy rather than a fully closed
+figure.
 
 ---
 
