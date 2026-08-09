@@ -8,8 +8,8 @@ Two jobs:
   2. Monte Carlo + Sobol over the coefficient library, testing whether the six
      findings in COEFFICIENTS_v0.1.md survive coefficient uncertainty.
 
-The standing rule from Paper 3 applies: claims are reported as ORDINAL
-invariances across the parameter space, not as point estimates.
+The standing rule applied throughout this model: claims are reported as
+ORDINAL invariances across the parameter space, not as point estimates.
 
 The fast model exploits a structural fact about the campaign patterns being
 compared: inter-batch gaps run to hours while tau_cool is order 100 s, so
