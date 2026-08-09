@@ -17,8 +17,8 @@ T3  Derived by this work from T1/T2 quantities, or reported by a
 T4  Not identifiable from published data. Entered as a wide prior and
     flagged for direct measurement.
 
-USAGE RULE (carried over from Paper 3)
---------------------------------------
+USAGE RULE
+----------
 No T3 or T4 coefficient may appear as a point estimate in any reported
 result. They enter Monte Carlo / Sobol as distributions, and any claim
 must be shown invariant across their range.
@@ -79,7 +79,8 @@ P_IDLE = Coefficient(
     value=0.5, low=0.3, high=0.9, unit="W",
     tier="T3",
     source="Derived. Screen-off idle draw consistent with the marginal-energy "
-           "framing of FMCL Paper 1 Sec 4.4 worked example (0.5 W idle).",
+           "framing used throughout this deployment model (0.5 W idle, a "
+           "standard smartphone screen-off baseline).",
     note="Needed only to convert whole-device measured power into the MARGINAL "
          "power charged to the learning task under assumption A1.",
 )
@@ -122,7 +123,7 @@ T_AMB = Coefficient(
     source="Reference ambient used throughout the battery-ageing literature "
            "(25 C is the standard Arrhenius reference temperature).",
     note="Indoor overnight charging conditions assumed for the FMCL "
-         "participation window (Paper 1 Sec 4.2).",
+         "participation window.",
 )
 
 T_THROTTLE_ONSET_TIME = Coefficient(
@@ -189,7 +190,7 @@ T_SKIN_CAP = Coefficient(
            "limits in the 43-48 C band.",
     note="User-comfort constraint, distinct from the SoC junction cap. Relevant "
          "to FMCL because participation must not degrade the primary user "
-         "experience (Paper 1 Sec 4.5 incentive alignment).",
+         "experience.",
 )
 
 
@@ -343,9 +344,9 @@ BATT_SOC_COUPLING = Coefficient(
     tier="T2",
     source="Same 232-cell dataset: influence of state of charge on calendar "
            "ageing peaks around 85% SOC.",
-    note="FMCL schedules participation during charging (Paper 1 Sec 4.2), which "
+    note="FMCL schedules participation during charging, which "
          "places devices in the HIGH-SOC, HIGH-TEMPERATURE corner. This is an "
-         "uncomfortable interaction the series has not previously priced.",
+         "uncomfortable interaction not previously priced into the wear model.",
 )
 
 BATT_SOC_THERMAL_COUPLING = Coefficient(
@@ -406,8 +407,8 @@ FLASH_DEVICES = Coefficient(
     source="FLASH behaviour dataset via FedScale -- 136k users, one week "
            "(31 Jan - 6 Feb 2020), 180M trace items covering battery charge "
            "state, network condition, and screen lock.",
-    note="Used as the availability process. Replaces the semi-Markov "
-         "assumption of Paper 1 Assumption 1 with empirical traces.",
+    note="Used as the availability process, replacing a semi-Markov "
+         "modelling assumption with empirical traces.",
 )
 
 
