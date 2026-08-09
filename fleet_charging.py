@@ -3,8 +3,8 @@ FMCL Paper 5 -- Charging-coupled fleet and scheduling.
 
 Replaces the ambient-baseline Fleet in scheduler.py. Devices are now plugged in
 and charging throughout an overnight participation window, which is the setting
-Paper 1's availability definition actually specifies. Each device carries a
-charger rate, a state of charge, and two coupled temperatures.
+the reuse-centric availability definition actually specifies. Each device
+carries a charger rate, a state of charge, and two coupled temperatures.
 
 The two-node dynamics of charging.py are vectorised across the fleet, since a
 per-second scalar loop over 100 devices across a six-hour window is intractable.
@@ -178,7 +178,7 @@ def p_random(f, pool, K, st, rng):
 
 
 def p_static(f, pool, K, st, rng):
-    """Paper 1's rule with a nominal power model: thermally blind."""
+    """The standard reuse-centric selection rule with a nominal power model: thermally blind."""
     U = f.utility[pool]
     Us = 1.0 / (f.t_round / f.eta_min[pool]); Us /= Us.max()
     En = f.P_comp[pool] * f.t_round; En /= En.max()
