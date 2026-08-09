@@ -6,7 +6,7 @@ Two jobs:
   1. A fast campaign model, validated against the full step-wise simulation in
      thermal.py, cheap enough for tens of thousands of evaluations.
   2. Monte Carlo + Sobol over the coefficient library, testing whether the six
-     findings in COEFFICIENTS_v0.1.md survive coefficient uncertainty.
+     findings in COEFFICIENTS_FINDINGS.md survive coefficient uncertainty.
 
 The standing rule applied throughout this model: claims are reported as
 ORDINAL invariances across the parameter space, not as point estimates.
@@ -299,7 +299,7 @@ def main():
             print(f"  Negligible (ST < 0.01): {', '.join(neg)}")
 
     print("\n" + "=" * 74)
-    print("Interpretation belongs in COEFFICIENTS_v0.2.md, not here.")
+    print("Interpretation belongs in COEFFICIENTS_FINDINGS.md, not here.")
     print("=" * 74)
 
 
