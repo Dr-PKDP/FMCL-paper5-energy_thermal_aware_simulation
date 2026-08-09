@@ -325,7 +325,7 @@ EA_CAPACITY_FADE = Coefficient(
            "5 manufacturers, up to 13 years; Arrhenius fits give activation "
            "energy for capacity loss of 23.6-29.9 kJ/mol "
            "(J. Energy Storage, S2352152X21011889).",
-    note="SEE FINDING F1 in COEFFICIENTS_v0.1.md. This range does NOT reproduce "
+    note="SEE FINDING F1 in COEFFICIENTS_FINDINGS.md. This range does NOT reproduce "
          "the widely repeated 'degradation doubles per 10 C' claim. Do not use "
          "the doubling rule.",
 )
