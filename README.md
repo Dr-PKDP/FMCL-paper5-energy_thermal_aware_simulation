@@ -39,6 +39,8 @@ well under a minute.
 | `simulation.py` | Standard FedProx local-training engine, included so the repository is self-contained (see header comment for details) |
 | `converge_charging.py` | Couples `simulation.py` to `fleet_charging.py` for the model-quality comparisons (Tables 9-11) |
 | `verify.py` | Independent verification suite for the thermal/wear model; run it first |
+| `COEFFICIENTS_FINDINGS.md` | Write-up of the six findings (F1–F6) `verify.py` and `uncertainty.py` produce, plus their Monte Carlo / Sobol robustness results |
+| `table13_upper.py` | Coefficient-uncertainty sweep across all eight policies (Table 13's dominance-robustness claims) |
 | `uncertainty.py`, `uq_charging.py` | Monte Carlo / sensitivity analysis over the coefficient library (Table 13, Section 9) |
 | `baseline_tuning.py` | Minimal hyperparameter search for the three tunable baselines (Section 8.10) |
 | `churn_experiment.py` | Correlated availability shock robustness check (Section 7.8) |
