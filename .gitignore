@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.pkl
+mnist_full.npz
+tracesim/data/
+.DS_Store
