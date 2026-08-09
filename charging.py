@@ -5,7 +5,7 @@ WHY THIS EXISTS
 ---------------
 Earlier versions modelled a device heating from ambient under training load
 alone. That is the wrong baseline for FMCL. The architecture schedules
-participation during charging by design (Paper 1, Definition 1), and a charging
+participation during charging by design, and a charging
 phone is not at ambient: fast charging raises battery temperature by 8-10 C
 relative to standard charging, and thermal governors begin derating charge
 current in the mid-30s C. Training therefore starts on a device that is already
@@ -63,9 +63,9 @@ T_CHG_STOP = 45.0       # C, charging suspended
 
 # Hard compute ceiling. Beyond the frequency derating already in thermal.eta,
 # mobile operating systems suspend background work outright to hold skin
-# temperature -- the OS-level battery-management behaviour Paper 1's
-# limitations section flags via Wang & Wu [115]. Without this the leakage term
-# is an unbounded positive feedback and the model diverges.
+# temperature -- a hard OS-enforced thermal shutdown directly observed on
+# recent flagship hardware (Tummalapalli et al. [11]). Without this the
+# leakage term is an unbounded positive feedback and the model diverges.
 T_COMPUTE_CEILING = 58.0   # C, SoC temperature at which background work is cut
 T_COMPUTE_KILL = 63.0      # C, background work fully suspended
 
