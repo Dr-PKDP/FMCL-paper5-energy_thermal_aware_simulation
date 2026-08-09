@@ -36,7 +36,7 @@ well under a minute.
 | `coefficients.py` | Provenance-tagged coefficient library (Section 9.1), every value tiered and sourced |
 | `scheduler.py` | Device-class definitions and shared utilities used by `fleet_charging.py` |
 | `fleet_charging.py` | The charging-coupled fleet simulator and all eight policies (CATS plus seven baselines) |
-| `simulation.py` | FedProx local-training engine, vendored unmodified from the companion repository for the second paper in this series (see header comment for the source) |
+| `simulation.py` | Standard FedProx local-training engine, included so the repository is self-contained (see header comment for details) |
 | `converge_charging.py` | Couples `simulation.py` to `fleet_charging.py` for the model-quality comparisons (Tables 9-11) |
 | `verify.py` | Independent verification suite for the thermal/wear model; run it first |
 | `uncertainty.py`, `uq_charging.py` | Monte Carlo / sensitivity analysis over the coefficient library (Table 13, Section 9) |
