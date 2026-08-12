@@ -2,15 +2,16 @@
 
 Simulation code and datasets supporting:
 
-> "Charging and Computation Compete: Energy- and Thermal-Aware Participant
-> Selection for Federated Learning on Reused Consumer Devices"
+> "Charging and Computation Compete: Energy- and Thermal-Aware Scheduling
+> for Federated Learning on Reused Consumer Devices"
 
 This repository reproduces every table and figure in Sections 4-9 of the
 paper: the coupled thermal/wear device model, the CATS scheduler and seven
 baseline policies, the main policy comparison, the tuning sweeps, the
-ablation, the sensitivity analysis, and the two empirical checks against
-real device data (a real 107,749-device availability trace, and two real
-image datasets in place of the synthetic learning task).
+ablation, the sensitivity analysis, and the three empirical checks against
+real device data (a real 107,749-device availability trace, a 500,000-entry
+compute/communication capacity trace, and two real image datasets in place
+of the synthetic learning task).
 
 ## Requirements
 
@@ -62,8 +63,10 @@ well under a minute.
 
 | Path | Contents |
 |---|---|
+| `tracesim/setup_data.sh` | Downloads and checksum-verifies both real FedScale data files this section needs. Run this first. |
+| `tracesim/trace_summary_stats.py` | Reproduces all three Section 7.7 checks: session-length distribution, concurrent-availability sampling, and compute-heterogeneity spread |
 | `tracesim/trace_availability.py` | Converts FedScale's real per-device session data into a round-by-round availability matrix |
-| `tracesim/trace_run.py` | Reruns the main policy comparison with real trace-derived availability in place of the i.i.d. draw |
+| `tracesim/trace_run.py` | Reruns the main policy comparison (Section 7.9) with real trace-derived availability in place of the i.i.d. draw |
 
 **Supplementary:**
 
@@ -113,32 +116,43 @@ python full_run.py
 
 ### Real-trace validation (Sections 7.7 and 7.9)
 
-This requires the FedScale client behaviour trace, which is not part of
-this repository (it belongs to FedScale, not to this paper, and is too
-large to bundle sensibly). Download just the one file needed:
+This requires **two** files from FedScale, neither part of this
+repository (both belong to FedScale, not to this paper, and are too
+large to bundle sensibly): the client behaviour/availability trace
+(Sections 7.7 and 7.9), and the client compute/communication capacity
+trace (Section 7.7's third check only). Both are downloaded and
+checksum-verified by one script:
 
 ```bash
-mkdir -p tracesim/data
-curl -L -o tracesim/data/client_behave_trace \
-  https://raw.githubusercontent.com/SymbioticLab/FedScale/master/benchmark/dataset/data/device_info/client_behave_trace
+bash tracesim/setup_data.sh
 ```
 
-If FedScale has reorganised its repository since this was written, the
-file is described in FedScale's own `benchmark/dataset/data/device_info/`
-directory; place whatever you retrieve at `tracesim/data/client_behave_trace`,
-or point `trace_availability.py` at it directly via the
-`FMCL_FEDSCALE_TRACE` environment variable:
-
-```bash
-export FMCL_FEDSCALE_TRACE=/path/to/client_behave_trace
-```
+This prints `[OK]` for each file once its size and SHA-256 checksum have
+been confirmed against the values recorded when this repository's own
+results were last verified against them (2026-08-12), and fails loudly,
+rather than silently, if anything about the download doesn't match --
+including if FedScale has reorganised its repository since this was
+written, in which case the script will say so explicitly rather than
+proceed with an unverified file. If you need to place the files manually
+instead, they belong at `tracesim/data/client_behave_trace` and
+`tracesim/data/client_device_capacity`, or can be pointed at via the
+`FMCL_FEDSCALE_TRACE` and `FMCL_FEDSCALE_CAPACITY` environment variables.
 
 Then, from the repository root:
 
 ```bash
 cd tracesim
-python trace_run.py
+python trace_summary_stats.py   # Section 7.7's three checks
+python trace_run.py             # Section 7.9's full policy rerun
 ```
+
+**Expected checksums**, for anyone verifying independently rather than
+trusting this script:
+
+| File | Size (bytes) | SHA-256 |
+|---|---|---|
+| `client_behave_trace` | 25,640,150 | `d0b6f81a01f0ea5f7ec432583f5afe93b1e72424db4c1affa88c484f15901662` |
+| `client_device_capacity` | 39,369,071 | `477f61049443987318fc5667cafa059b3b420eb0e03ccb5ceb3262d20e059e53` |
 
 ## Notes on reproducibility
 
